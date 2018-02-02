@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>贪吃蛇网页版</title>
+    <style>
+      *{margin:0;padding:0;}
+      li{
+        list-style: none;
+      }
+      #game{
+        width:500px;
+        height:500px;
+        margin:50px auto;
+        border:1px solid #e3e3e3;
+        position:relative;
+        background-color:yellow;
+       /* background-image:url(T1RU8eXa8XXXXXXXXX.jpg);*/
+       background-color: black;
+      }
+      .snakeBody{
+        width:18px;
+        height:18px;
+        background-color:#0f0;
+        position:absolute;
+  /*      border:1px solid #f00;*/
+       border-radius: 100%; 
+
+      }
+      #game span{
+        width:20px;
+        background-color:#f99;
+        height:20px;
+        border-radius:50%;
+        position:absolute;
+        display:block;
+      }
+      #defen{
+        width: 200px;
+        height:60px;
+        line-height: 60px;
+        background-color:#524720;
+        position: absolute;
+        left:-290px;
+        color:#cecece;
+        text-align: center;
+        font-size: 18px;
+      }
+       #btn{
+        width: 200px;
+        height:60px;
+        line-height: 60px;
+        background-color:#5ca093;
+        position: absolute;
+        left:-290px;
+        top:90px;
+        color:#cecece;
+        text-align: center;
+        font-size: 18px;
+      }
+       #btn2{
+        width: 200px;
+        height:60px;
+        line-height: 60px;
+        background-color: #72ad58fa;
+        position: absolute;
+        left:-290px;
+        top:170px;
+        color:#cecece;
+        text-align: center;
+        font-size: 18px;
+      }
+      #btn3{
+        width: 200px;
+        height:60px;
+        line-height: 60px;
+        background-color: #ada958fa;
+        position: absolute;
+        left:-290px;
+        top:250px;
+        color:#cecece;
+        text-align: center;
+        font-size: 18px;
+
+      }
+       #btn4{
+        width: 200px;
+        height:60px;
+        line-height: 60px;
+        background-color:black;
+        position: absolute;
+        left:-290px;
+        top:350px;
+        color:#cecece;
+        text-align: center;
+        font-size: 18px;
+
+      }
+      #ii{
+        color:yellow;
+      }
+      #span{
+      display: block;
+      width:300px;
+      line-height:94px;
+      height: 48px;
+      margin: 0 auto;
+      font-size: 25px;
+      }
+      #ul{
+        width: 200px;
+        height:185px;
+        line-height: 60px;
+        background-color:yellow;
+        position: absolute;
+        left:-290px;
+        top:310px;
+        color:black;
+        text-align: center;
+        font-size: 18px;
+      }
+      #ul li{
+        /*border: 1px solid white;*/
+      }
+      .ss{
+        background-color:red;
+      }
+      #select{
+        position:absolute;
+        width: 200px;
+        height:45px;
+       left:-290px;
+        top:310px;
+      }
+    </style>
+  </head> 
+  <body>
+    <span id="span">黑暗中一条五彩的蛇</span>
+    <div id="game">
+    <div id="defen">获得<i id="ii">0</i>分</div>
+    <button id="btn">暂停</button>
+    <button id="btn2">开始</button>
+  <!--    <button id="btn4">上帝模式</button> -->
+    <select id="select">
+   <!--  <option value="">下拉选择单</option> -->
+    <option value="250">简单</option>  
+    <option value="80">一般</option>
+    <option value="40">困难</option>
+    </select> 
+    
+      
+    </div>
+    <script>
+     
+      var span=document.getElementById("span");
+      var ul=document.getElementById("ul");
+      var defen=document.getElementById("ii");
+      var wrap = document.getElementById("game");
+      var btn = document.getElementById("btn");
+      var btn2 = document.getElementById("btn2");
+      var btn3 = document.getElementById("btn3");
+       // var btn4 = document.getElementById("btn4");
+      var initLength = 8; //蛇身的初始长度
+      var snake = [];
+      var dir = "right" // 蛇的移动方向,默认向右移动
+      var speed = 150;  // 移动速度,值越小移动越快
+      var width = 20;
+      var k=0;
+      var player = "godModel"
+
+     
+      span.style.color=backgr()
+
+      btn.onclick=function(){
+            clearInterval(autoMove)
+      }
+      btn2.onclick=function(){
+          autoMove = setInterval(function(){
+            moveSnake()
+          },speed)
+      }
+     
+    
+      //生成一节身体
+      function addBody(point){
+
+        //创建一节身体
+        var snakeBody = document.createElement("div");
+
+        //设置class
+        snakeBody.className = "snakeBody";
+
+        //插入到游戏界面
+        wrap.appendChild(snakeBody);
+
+        //新的身体插入到数组里
+        snake.push(snakeBody);
+
+        //动态设置坐标位置
+        snakeBody.style.left = point.x + "px";
+
+        snakeBody.style.top = point.y + "px";
+      }
+
+
+      //初始化一条蛇
+      function initSnake(){
+
+        for(var i = 0; i < initLength;i++){
+
+        addBody({x:i* 20,y:0})
+
+        }
+      }
+      initSnake()
+
+
+
+
+        // 移动蛇
+      function moveSnake(){
+        var LEFT = parseInt(snake[snake.length - 1].style.left);
+        var TOP = parseInt(snake[snake.length - 1].style.top)
+        if(dir == "right"){
+
+          snake[0].style.left = LEFT + width + "px";
+
+          snake[0].style.top = TOP + "px";
+
+        }
+        if(dir == "bottom"){
+          snake[0].style.left = LEFT + "px";
+
+          snake[0].style.top = TOP + width + "px";
+        }
+        if(dir == "left"){
+          snake[0].style.left = LEFT - width + "px";
+
+          snake[0].style.top = TOP + "px";
+        }
+        if(dir == "top"){
+          snake[0].style.left = LEFT + "px";
+
+          snake[0].style.top = TOP - width + "px";
+      }
+      //更新数组
+      snake.push(snake[0])
+      snake.shift()
+
+        
+
+
+
+
+      // 得分碰撞监测
+     headPoint = {}
+      headPoint.y = parseInt(snake[snake.length - 1].style.top)
+
+      headPoint.x = parseInt(snake[snake.length - 1].style.left)
+
+      console.log(headPoint)
+
+      if(headPoint.x == point.x && headPoint.y == point.y){
+
+      createFood();
+
+      addBody({x:headPoint.x,y:headPoint.y});
+      }
+
+      //。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。
+       if(player == "godModel"){
+          startGodModel();
+        }
+
+
+      //边缘死亡碰撞检测
+      if(headPoint.x >480 || headPoint.x < 0 || headPoint.y >480|| headPoint.y <   0){
+        dead();
+           alert('Game Over!!!'+"获得"+defen.innerHTML+"分");
+           
+        if(dir == "right"){
+            snake[snake.length - 1].style.left =  parseInt(snake[0].style.left) - width + "px"
+          }
+        if(dir == "bottom"){
+            snake[snake.length-1].style.top = parseInt(snake[0].style.top) - width + "px"
+        }
+        if(dir == "left"){
+           snake[snake.length - 1].style.left =  parseInt(snake[0].style.left) + width + "px"
+        }
+        if(dir == "top"){
+        snake[snake.length - 1].style.top =  parseInt(snake[0].style.top) + width + "px"
+         }
+           
+      }
+      //死亡检测--碰撞自身所 
+      for(var i=0;i<snake.length-2;i++){
+        // snake[i].style.backgroundColor=backgr()
+        var x=parseInt(snake[i].style.left)
+        var y=parseInt(snake[i].style.top)
+        if(headPoint.x==x&&headPoint.y==y)
+
+        clearInterval(autoMove)
+      }
+                
+      }
+
+
+      // 蛇自动移动功能
+      var autoMove = setInterval(function(){
+
+        moveSnake()
+
+      },speed)
+
+
+
+
+      // 生成食物方法
+      function createFood(){
+
+        if(wrap.getElementsByTagName("span").length){
+
+          //清除已经存在的食物
+          wrap.removeChild(wrap.getElementsByTagName("span")[0])
+        }
+          //生成并插入食物节点
+          var food = document.createElement("span");
+
+          wrap.appendChild(food)
+          // 食物坐标
+          point = {x:0,y:0};
+          defen.innerHTML=0+k;
+          k++
+          //生成随机坐标值
+          point.x = Math.floor(Math.random()*(500 - 20) / 20) * 20;
+
+          point.y = Math.floor(Math.random()*(500 - 20) / 20) * 20;
+
+          //为节点样式赋值随机坐标值
+          food.style.top = point.y + "px"
+
+          food.style.left = point.x + "px"
+      }
+      //初始化食物
+      createFood()
+
+
+      // 死亡逻辑
+      function dead(){
+      clearInterval(autoMove)
+      }
+
+        //上帝模式、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+       function startGodModel(){
+        if(headPoint.x !== point.x){
+          if(headPoint.x > point.x){
+            if(dir == "right"){
+              dir = "bottom";
+            }
+            else{
+              dir = "left"
+            }
+          }
+          if(headPoint.x < point.x){
+            if(dir == "left"){
+              dir = "bottom"
+            }
+            else{
+              dir = "right"
+            }
+          }
+        }
+        if(headPoint.x == point.x && headPoint.y !== point.y){
+          if(headPoint.y < point.y){
+            if(dir == "top"){
+              dir = "left"
+            }
+            else{
+              dir = "bottom"
+            }
+          }
+          if(headPoint.y > point.y){
+            if(dir == "bottom"){
+              dir = "left"
+            }     
+            else{
+              dir = "top"
+            }
+          }
+        }
+      }
+
+      //根据键盘按下的键子改变蛇头朝向
+      window.onkeydown   = function(event){
+
+        if(event.keyCode == 40 && dir !== "top"){
+          dir = "bottom";
+        }
+        if(event.keyCode == 39 && dir !== "left"){
+          dir = "right";
+        }
+        if(event.keyCode == 37 && dir !== "right"){
+          dir = "left";
+        }
+        if(event.keyCode == 38 && dir !== "bottom"){
+          dir = "top";
+        }
+      }
+
+    //蛇身体的颜色
+    function backgr(){
+     var color=[0,1,2,3,4,5,6,7,8,9,"A","B","C","D","E","F"]
+     var a="#"
+       for(var i = 0; i <6; i++){
+       var  num = Math.floor(Math.random() * 16);
+         console.log(num)
+         a = a + color[num]
+       }
+        return a
+        console.log(a)
+    }  
+    
+    </script>
+  </body>
+</html>
